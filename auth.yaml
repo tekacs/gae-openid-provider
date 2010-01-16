@@ -1,5 +1,5 @@
 auth_plugin: google_accounts
 
 google_accounts:
-    allowed_users: [exampleuser@example.com,
+    allowed_users: [test@example.com,
                     user@domain.tld]

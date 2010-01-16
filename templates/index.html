@@ -2,15 +2,14 @@
 
 {% block body %}
 <p>
-You can use your Google Account to log into any site that supports
+This is an
 <nobr><a href="http://openid.net/">
- <img src="/static/openid-icon.png" />OpenID</a></nobr>!
+ <img src="/static/openid-icon.png" />OpenID</a></nobr> provider.
 {% if user %}
-  Just enter
-  <span class="url">{{ request_url_without_path }}/{{ user.nickname }}</span> as
+  <span class="url">{{ request_url_without_path }}/{{ user.nickname }}</span> is
   your OpenID URL.
 {% else %}
-  First, <a href="{{ login_url|escape }}">log in</a> to your Google account.
+  Please <a href="{{ login_url|escape }}">log in</a> to your account.
 {% endif %}
 </p>
 
@@ -21,7 +20,6 @@ You can use your Google Account to log into any site that supports
 </div>
 
 <table class="logins">
-<!-- <tr><th>Action</th><th>Web Site</th><th>Time</th></tr> -->
 {% for login in logins %}
   <tr class="{{ login.kind }}">
     <td class="kind">
@@ -39,8 +37,8 @@ You can use your Google Account to log into any site that supports
 {% if not logins %}
   <tr><td colspan="3" class="light" align="center">
     {% if user %}
-      You haven't used OpenID yet. Try using it to leave a comment on
-      <a href="http://blogsofnote.blogspot.com/">Blogger</a>!
+      You haven't used OpenID yet. Try using it to log into
+      <a href="http://stackoverflow.com/users/login">Stack Overflow</a>!
     {% else %}
       Please <a href="{{ login_url|escape }}">log in</a> to see your recent
       OpenID requests.
