@@ -148,7 +148,8 @@ class Handler(webapp.RequestHandler):
           oidresponse: OpenIDResponse
           The response to send, usually created by OpenIDRequest.answer().
         """
-        logging.warning('Respond: oidresponse.request.mode '+oidresponse.request.mode)
+        logging.warning('Respond: oidresponse.request.mode ' +
+                                                    oidresponse.request.mode)
 
         if oidresponse.request.mode in ['checkid_immediate', 'checkid_setup']:
             user = get_current_user()
@@ -161,11 +162,6 @@ class Handler(webapp.RequestHandler):
                                  'email':user.email()}
                     sreg_resp = SRegResponse.extractResponse(sreg_req, user_data)
                     sreg_resp.toMessage(oidresponse.fields)
-                # add nickname, using the Simple Registration Extension:
-                # http://www.openidenabled.com/openid/simple-registration-extension/
-#mrk
-#        oidresponse.fields.setArg('http://openid.net/sreg/1.0', 'nickname', user.nickname())
-#        oidresponse.fields.setArg('http://openid.net/sreg/1.0', 'email', user.email())
                 pass
         logging.info('Using response: %s' % oidresponse)
         encoded_response = oidserver.encodeResponse(oidresponse)
@@ -274,8 +270,8 @@ class Handler(webapp.RequestHandler):
 
         if path[1:] != user.nickname():
             expected = parsed[0] + '://' + parsed[1] + '/' + user.nickname()
-            logging.warning('Bad identity URL %s for user %s; expected %s, path:%s' %
-                            (identity, user.nickname(), expected, path))
+            warn = 'Bad identity URL %s for user %s; expected %s, path: %s'
+            logging.warning(warn % (identity, user.nickname(), expected, path))
             return False
 
         logging.debug('User %s matched identity %s' % (user.nickname(), identity))
@@ -367,7 +363,8 @@ class Login(Handler):
                 logging.debug('Has cookie, confirming identity to ' +
                               oidrequest.trust_root)
                 self.store_login(oidrequest, 'remembered')
-                self.Respond(oidrequest.answer(True, identity=get_identity_url(self.request)))
+                self.Respond(oidrequest.answer(True,
+                                        identity=get_identity_url(self.request)))
             elif oidrequest.immediate:
                 self.store_login(oidrequest, 'declined')
                 oidresponse = oidrequest.answer(False)
@@ -404,10 +401,10 @@ class FinishLogin(Handler):
 
         try:
             global oidserver
-#mrk
             from openid.message import Message
             message = Message.fromPostArgs(args)
-            oidrequest = OpenIDServer.CheckIDRequest.fromMessage(message, oidserver.op_endpoint)
+            oidrequest = OpenIDServer.CheckIDRequest.fromMessage(message,
+                                                            oidserver.op_endpoint)
         except:
             trace = ''.join(traceback.format_exception(*sys.exc_info()))
             self.ReportError('Error decoding login request:\n%s' % trace)
@@ -416,15 +413,17 @@ class FinishLogin(Handler):
         if args.has_key('yes'):
             logging.debug('Confirming identity to %s' % oidrequest.trust_root)
             if args.get('remember', '') == 'yes':
-                logging.info('Setting cookie to remember openid login for two weeks')
+                logging.info('Setting cookie to remember login for two weeks.')
 
                 expires = datetime.datetime.now() + datetime.timedelta(weeks=2)
                 expires_rfc822 = expires.strftime('%a, %d %b %Y %H:%M:%S +0000')
                 self.response.headers.add_header(
-                  'Set-Cookie', 'openid_remembered_%s=yes; expires=%s' % (digest(oidrequest.trust_root), expires_rfc822))
+                  'Set-Cookie', 'openid_remembered_%s=yes; expires=%s'
+                    % (digest(oidrequest.trust_root), expires_rfc822))
 
             self.store_login(oidrequest, 'confirmed')
-            answer = oidrequest.answer(True, identity=get_identity_url(self.request))
+            answer = oidrequest.answer(True,
+                                        identity=get_identity_url(self.request))
             logging.info('answer:%s', answer)
             self.Respond(answer)
 
@@ -448,7 +447,8 @@ _URLS = [
 ]
 
 def main(argv):
-    logging.basicConfig(level=logging.DEBUG, format="%(levelname)-8s: %(message)s - %(pathname)s:%(lineno)d")
+    logging.basicConfig(level=logging.DEBUG,
+                format="%(levelname)-8s: %(message)s - %(pathname)s:%(lineno)d")
     logging.debug('start')
     application = webapp.WSGIApplication(_URLS, debug=_DEBUG)
     InitializeOpenId()
