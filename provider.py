@@ -88,7 +88,7 @@ def InitializeOpenId():
     name = os.environ.get('SERVER_NAME', None)
     port = os.environ.get('SERVER_PORT', '80')
     op_endpoint = ("http://%s%s/server" %
-                    (name, ":%s" % port if port != "80" else "") if name else None)
+                 (name, ":%s" % port if port != "80" else "") if name else None)
     logging.info('op_endpoint: %s', op_endpoint)
     oidserver = OpenIDServer.Server(store.DatastoreStore(),op_endpoint=op_endpoint)
 
@@ -125,8 +125,9 @@ class Handler(webapp.RequestHandler):
     def GetOpenIdRequest(self):
         """Creates and OpenIDRequest for this request, if appropriate.
 
-        If this request is not an OpenID request, returns None. If an error occurs
-        while parsing the arguments, returns False and shows the error page.
+        If this request is not an OpenID request, returns None. If an error
+        occurred while parsing the arguments, returns False and shows the error
+        page.
 
         Return:
           An OpenIDRequest, if this user request is an OpenID request. Otherwise
@@ -160,13 +161,14 @@ class Handler(webapp.RequestHandler):
                     logging.info("sreg_req:%s", sreg_req.allRequestedFields())
                     user_data = {'nickname':user.nickname(),
                                  'email':user.email()}
-                    sreg_resp = SRegResponse.extractResponse(sreg_req, user_data)
+                    sreg_resp = SRegResponse.extractResponse(sreg_req,user_data)
                     sreg_resp.toMessage(oidresponse.fields)
                 pass
         logging.info('Using response: %s' % oidresponse)
         encoded_response = oidserver.encodeResponse(oidresponse)
 
-        # update() would be nice, but wsgiref.headers.Headers doesn't implement it
+        # update() would be nice, but wsgiref.headers.Headers
+        # doesn't implement it
         for header, value in encoded_response.headers.items():
             self.response.headers[header] = str(value)
 
@@ -250,8 +252,8 @@ class Handler(webapp.RequestHandler):
         Specifically, checks that the request URI's path is the user's nickname.
 
         Returns:
-          True if the request's path is the user's nickname. Otherwise, False, and
-          prints an error page.
+          True if the request's path is the user's nickname. Otherwise, False,
+          and prints an error page.
         """
         args = self.ArgsToDict()
 
@@ -274,7 +276,7 @@ class Handler(webapp.RequestHandler):
             logging.warning(warn % (identity, user.nickname(), expected, path))
             return False
 
-        logging.debug('User %s matched identity %s' % (user.nickname(), identity))
+        logging.debug('User %s matched identity %s'%(user.nickname(), identity))
         return True
 
     def ShowFrontPage(self):
@@ -364,7 +366,7 @@ class Login(Handler):
                               oidrequest.trust_root)
                 self.store_login(oidrequest, 'remembered')
                 self.Respond(oidrequest.answer(True,
-                                        identity=get_identity_url(self.request)))
+                                    identity=get_identity_url(self.request)))
             elif oidrequest.immediate:
                 self.store_login(oidrequest, 'declined')
                 oidresponse = oidrequest.answer(False)
@@ -404,7 +406,7 @@ class FinishLogin(Handler):
             from openid.message import Message
             message = Message.fromPostArgs(args)
             oidrequest = OpenIDServer.CheckIDRequest.fromMessage(message,
-                                                            oidserver.op_endpoint)
+                                                        oidserver.op_endpoint)
         except:
             trace = ''.join(traceback.format_exception(*sys.exc_info()))
             self.ReportError('Error decoding login request:\n%s' % trace)
