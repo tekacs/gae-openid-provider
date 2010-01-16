@@ -288,32 +288,32 @@ class XRDS(Handler):
         global oidserver
         self.response.headers['Content-Type'] = 'application/xrds+xml'
         self.response.out.write("""\
-    <?xml version="1.0" encoding="UTF-8"?>
-    <xrds:XRDS xmlns:xrds="xri://$xrds" xmlns="xri://$xrd*($v*2.0)">
-    <XRD>
-      <Service priority="0">
-        <Type>http://specs.openid.net/auth/2.0/server</Type>
-        <Type>http://specs.openid.net/auth/2.0/signon</Type>
-        <Type>http://openid.net/srv/ax/1.0</Type>
-        <URI>%(op_endpoint)s</URI>
-      </Service>
-    </XRD>
-    </xrds:XRDS>""" % {'op_endpoint':oidserver.op_endpoint})
+<?xml version="1.0" encoding="UTF-8"?>
+<xrds:XRDS xmlns:xrds="xri://$xrds" xmlns="xri://$xrd*($v*2.0)">
+<XRD>
+  <Service priority="0">
+    <Type>http://specs.openid.net/auth/2.0/server</Type>
+    <Type>http://specs.openid.net/auth/2.0/signon</Type>
+    <Type>http://openid.net/srv/ax/1.0</Type>
+    <URI>%(op_endpoint)s</URI>
+  </Service>
+</XRD>
+</xrds:XRDS>""" % {'op_endpoint':oidserver.op_endpoint})
 
 class UserXRDS(Handler):
     def get(self):
         global oidserver
         self.response.headers['Content-Type'] = 'application/xrds+xml'
         self.response.out.write("""\
-    <?xml version="1.0" encoding="UTF-8"?>
-    <xrds:XRDS xmlns:xrds="xri://$xrds" xmlns="xri://$xrd*($v*2.0)">
-    <XRD>
-      <Service priority="0">
-        <Type>http://specs.openid.net/auth/2.0/signon</Type>
-        <URI>%(op_endpoint)s</URI>
-      </Service>
-    </XRD>
-    </xrds:XRDS>""" % {'op_endpoint':oidserver.op_endpoint})
+<?xml version="1.0" encoding="UTF-8"?>
+<xrds:XRDS xmlns:xrds="xri://$xrds" xmlns="xri://$xrd*($v*2.0)">
+<XRD>
+  <Service priority="0">
+    <Type>http://specs.openid.net/auth/2.0/signon</Type>
+    <URI>%(op_endpoint)s</URI>
+  </Service>
+</XRD>
+</xrds:XRDS>""" % {'op_endpoint':oidserver.op_endpoint})
 
 class FrontPage(Handler):
     """Show the default OpenID page, with the last 10 logins for this user."""

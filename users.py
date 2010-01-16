@@ -33,7 +33,6 @@ class UsersAPI():
             plugin = __import__('auth_plugins.' + plugin_name)
             plugin = getattr(plugin, plugin_name)
             logging.info('Loaded auth plugin successfully.')
-            logging.info(str(dir(plugin)))
         except ImportError:
             logging.info('Failed to load auth plugin!')
             return (None, None)
