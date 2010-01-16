@@ -1,3 +1,7 @@
+Modified from the below to add more features and expand.
+
+Source:
+
 Based on http://openid-provider.appspot.com/ sources, ported to latest
 python-openid library, version 2.1.1 (included) 
 
