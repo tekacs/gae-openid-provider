@@ -42,7 +42,6 @@ import urlparse
 import wsgiref.handlers
 
 from google.appengine.api import datastore
-from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from hashlib import md5
@@ -50,13 +49,7 @@ from hashlib import md5
 from openid.server import server as OpenIDServer
 import store
 
-allowed_users = ['user@domain.tld']
-
-def get_current_user():
-    user = users.get_current_user()
-    if not user:
-        return None
-    return user if user.email() in allowed_users else None
+import users as users_module
 
 # Set to True if stack traces should be shown in the browser, etc.
 _DEBUG = True
@@ -76,7 +69,7 @@ def get_op_endpoint(request):
     return request_url_without_path + '/server'
 
 def get_identity_url(request):
-    user = get_current_user()
+    user = users.get_current_user()
     if not user:
         return None
     parsed = urlparse.urlparse(request.uri)
@@ -153,7 +146,7 @@ class Handler(webapp.RequestHandler):
                                                     oidresponse.request.mode)
 
         if oidresponse.request.mode in ['checkid_immediate', 'checkid_setup']:
-            user = get_current_user()
+            user = users.get_current_user()
             if user:
                 from openid.extensions.sreg import SRegRequest, SRegResponse
                 sreg_req = SRegRequest.fromOpenIDRequest(oidresponse.request)
@@ -204,7 +197,7 @@ class Handler(webapp.RequestHandler):
           'request': self.request,
           'request_url_without_path': request_url_without_path,
           'request_url_without_params': request_url_without_params,
-          'user': get_current_user(),
+          'user': users.get_current_user(),
           'login_url': users.create_login_url(self.request.uri),
           'logout_url': users.create_logout_url('/'),
           'debug': self.request.get('deb'),
@@ -236,14 +229,14 @@ class Handler(webapp.RequestHandler):
           'remembered', 'confirmed', or 'declined'
         """
         assert kind in ['remembered', 'confirmed', 'declined']
-        user = get_current_user()
+        user = users.get_current_user()
         assert user
 
         login = datastore.Entity('Login')
         login['relying_party'] = oidrequest.trust_root
         login['time'] = datetime.datetime.now()
         login['kind'] = kind
-        login['user'] = user
+        login['user'] = user.hashuid()
         datastore.Put(login)
 
     def CheckUser(self):
@@ -257,7 +250,7 @@ class Handler(webapp.RequestHandler):
         """
         args = self.ArgsToDict()
 
-        user = get_current_user()
+        user = users.get_current_user()
         if not user:
             # not logged in!
             return False
@@ -327,10 +320,10 @@ class FrontPage(Handler):
     def get(self):
         logins = []
 
-        user = get_current_user()
+        user = users.get_current_user()
         if user:
             query = datastore.Query('Login')
-            query['user ='] = user
+            query['user ='] = user.hashuid()
             query.Order(('time', datastore.Query.DESCENDING))
             logins = query.Get(10)
 
@@ -344,7 +337,7 @@ class Login(Handler):
         """Handles GET requests."""
         login_url = users.create_login_url(self.request.uri)
         logout_url = users.create_logout_url(self.request.uri)
-        user = get_current_user()
+        user = users.get_current_user()
         if user:
             logging.debug('User: %s' % user)
         else:
@@ -449,9 +442,11 @@ _URLS = [
 ]
 
 def main(argv):
+    global users
     logging.basicConfig(level=logging.DEBUG,
                 format="%(levelname)-8s: %(message)s - %(pathname)s:%(lineno)d")
     logging.debug('start')
+    users = users_module.UsersAPI()
     application = webapp.WSGIApplication(_URLS, debug=_DEBUG)
     InitializeOpenId()
     wsgiref.handlers.CGIHandler().run(application)
