@@ -30,7 +30,7 @@ class User():
         return None
 
     def hash_id(self):
-        return hashlib.sha1(self.uid()).hexdigest()
+        return hashlib.sha1(self.user_id()).hexdigest()
 
 friendly_name = 'User Authentication Plugin'
 auth_class = Auth
