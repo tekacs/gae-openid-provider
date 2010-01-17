@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #
 # Copyright 2006 Google Inc.
 #
@@ -84,7 +84,8 @@ def InitializeOpenId():
     op_endpoint = ("http://%s%s/server" %
                  (name, ":%s" % port if port != "80" else "") if name else None)
     logging.info('op_endpoint: %s', op_endpoint)
-    oidserver = OpenIDServer.Server(store.DatastoreStore(),op_endpoint=op_endpoint)
+    oidserver = OpenIDServer.Server(store.DatastoreStore(),
+                                                    op_endpoint=op_endpoint)
 
 class Handler(webapp.RequestHandler):
     """A base handler class with a couple OpenID-specific utilities."""
@@ -237,7 +238,7 @@ class Handler(webapp.RequestHandler):
         login['relying_party'] = oidrequest.trust_root
         login['time'] = datetime.datetime.now()
         login['kind'] = kind
-        login['user'] = user.hashuid()
+        login['user'] = user.hash_id()
         datastore.Put(login)
 
     def CheckUser(self):
@@ -324,7 +325,7 @@ class FrontPage(Handler):
         user = users.get_current_user()
         if user:
             query = datastore.Query('Login')
-            query['user ='] = user.hashuid()
+            query['user ='] = user.hash_id()
             query.Order(('time', datastore.Query.DESCENDING))
             logins = query.Get(10)
 

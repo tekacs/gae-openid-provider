@@ -44,7 +44,7 @@ class GoogleUser(User):
     def is_admin(self):
         return self.is_admin
 
-    def uid(self):
+    def user_id(self):
         return self.email()
 
 friendly_name = 'Google Accounts'

@@ -26,10 +26,10 @@ class User():
     def is_admin(self):
         return None
 
-    def uid(self):
+    def user_id(self):
         return None
 
-    def hashuid(self):
+    def hash_id(self):
         return hashlib.sha1(self.uid()).hexdigest()
 
 friendly_name = 'User Authentication Plugin'
