@@ -44,6 +44,7 @@ import wsgiref.handlers
 from google.appengine.api import datastore
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
+from google.appengine.ext.webapp.util import run_wsgi_app
 from hashlib import md5
 
 from openid.server import server as OpenIDServer
@@ -449,7 +450,7 @@ def main(argv):
     users = users_module.UsersAPI()
     application = webapp.WSGIApplication(_URLS, debug=_DEBUG)
     InitializeOpenId()
-    wsgiref.handlers.CGIHandler().run(application)
+    run_wsgi_app(application)
 
 if __name__ == '__main__':
     main(sys.argv)
