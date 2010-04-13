@@ -90,8 +90,6 @@ def InitializeOpenId():
 class Handler(webapp.RequestHandler):
     """A base handler class with a couple OpenID-specific utilities."""
 
-    users = users_module.UsersAPI()
-
     def ArgsToDict(self):
         """Converts the URL and POST parameters to a singly-valued dictionary.
 
@@ -150,7 +148,7 @@ class Handler(webapp.RequestHandler):
                                                     oidresponse.request.mode)
 
         if oidresponse.request.mode in ['checkid_immediate', 'checkid_setup']:
-            user = self.users.get_current_user()
+            user = users.get_current_user()
             if user:
                 from openid.extensions.sreg import SRegRequest, SRegResponse
                 sreg_req = SRegRequest.fromOpenIDRequest(oidresponse.request)
@@ -201,9 +199,9 @@ class Handler(webapp.RequestHandler):
           'request': self.request,
           'request_url_without_path': request_url_without_path,
           'request_url_without_params': request_url_without_params,
-          'user': self.users.get_current_user(),
-          'login_url': self.users.create_login_url(self.request.uri),
-          'logout_url': self.users.create_logout_url('/'),
+          'user': users.get_current_user(),
+          'login_url': users.create_login_url(self.request.uri),
+          'logout_url': users.create_logout_url('/'),
           'debug': self.request.get('deb'),
         }
         values.update(extra_values)
@@ -233,7 +231,7 @@ class Handler(webapp.RequestHandler):
           'remembered', 'confirmed', or 'declined'
         """
         assert kind in ['remembered', 'confirmed', 'declined']
-        user = self.users.get_current_user()
+        user = users.get_current_user()
         assert user
 
         login = datastore.Entity('Login')
@@ -254,7 +252,7 @@ class Handler(webapp.RequestHandler):
         """
         args = self.ArgsToDict()
 
-        user = self.users.get_current_user()
+        user = users.get_current_user()
         if not user:
             # not logged in!
             return False

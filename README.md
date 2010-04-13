@@ -1,5 +1,6 @@
-This is a fully functioning OpenID provider, modified from the below, which was
-itself modified from Google's own example OpenID provider application.
+This is a fully functioning, albeit rather simple, OpenID provider for Google's
+App Engine, modified from the below, which was itself modified from Google's
+own example OpenID provider application.
 
 The modifications centre around extracting authentication out into 'plugins',
 rather than remaining tied-into Google Accounts authentication as in the

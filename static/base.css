@@ -150,7 +150,6 @@ a.button:hover, input[type^="submit"]:hover, input[type^="button"]:hover {
  */
 .top, .bottom {
   position: relative;
-  text-align: center;
 }
 
 .right, .left {
