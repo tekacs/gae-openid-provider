@@ -19,7 +19,8 @@
     <span class="nickname">{{ user.nickname }}</span> |
   {% endif %}
   {% if user %}
-    <a href="{{ logout_url|escape }}">Log out</a>
+  <a href="/settings">Settings</a> |
+  <a href="{{ logout_url|escape }}">Log out</a>
   {% else %}
     <a href="{{ login_url|escape }}">Log in</a>
   {% endif %}
